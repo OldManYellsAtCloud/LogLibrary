@@ -6,32 +6,31 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX_LINE_SIZE 500
-
-char buffer[MAX_LINE_SIZE + 1];
+#include <format>
 
 #define LOUD getenv("LOUD_LOG") != NULL
-#define DEBUG_ENABLED getenv("DEBUG_ENABLED") =! NULL
+#define DEBUG_ENABLED getenv("DEBUG_ENABLED") != NULL
 
-#define LOUD_ECHO   \
-if (LOUD) { \
-        snprintf(buffer, MAX_LINE_SIZE, fmt __VA_OPT__(,) __VA_ARGS__); \
-        std::cout << buffer << std::endl; \
-}
 
 #define DEBUG(fmt, ...)  \
-if (DEBUG_ENABLED) { \
-        syslog(LOG_DEBUG, fmt __VA_OPT__(,) __VA_ARGS__); \
-        LOUD_ECHO \
-}
+    if (DEBUG_ENABLED) { \
+        syslog(LOG_DEBUG, std::vformat(fmt, std::make_format_args(__VA_ARGS__)).c_str()); \
+        if (LOUD) { \
+            std::cout << std::vformat(fmt, std::make_format_args(__VA_ARGS__)) << std::endl; \
+        } \
+    }
 
 #define LOG(fmt, ...)  \
-syslog(LOG_INFO, fmt __VA_OPT__(,) __VA_ARGS__); \
-    LOUD_ECHO
+    syslog(LOG_INFO, std::vformat(fmt, std::make_format_args(__VA_ARGS__)).c_str()); \
+    if (LOUD) { \
+        std::cout << std::vformat(fmt, std::make_format_args(__VA_ARGS__)) << std::endl; \
+    }
 
 #define ERROR(fmt, ...)  \
-    syslog(LOG_ERR, fmt __VA_OPT__(,) __VA_ARGS__); \
-    LOUD_ECHO
+    syslog(LOG_ERR, std::vformat(fmt, std::make_format_args(__VA_ARGS__)).c_str()); \
+    if (LOUD) { \
+        std::cerr << std::vformat(fmt, std::make_format_args(__VA_ARGS__)) << std::endl; \
+    }
 
 
 #endif // LOGLIBRARY_H
