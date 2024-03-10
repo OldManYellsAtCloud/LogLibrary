@@ -21,3 +21,13 @@ install(TARGETS LogLibrary
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+        "LogLibraryConfig.cmake"
+        VERSION 1.0
+        COMPATIBILITY AnyNewerVersion)
+
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/LogLibraryConfig.cmake"
+        DESTINATION lib/cmake/LogLibrary)
