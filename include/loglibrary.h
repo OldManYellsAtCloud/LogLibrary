@@ -13,25 +13,34 @@
 #define DEBUG_ENABLED getenv("DEBUG_ENABLED") != NULL
 
 
-#define DBG(fmt, ...)  \
-    if (DEBUG_ENABLED) { \
-        syslog(LOG_DEBUG, std::vformat(fmt, std::make_format_args(__VA_ARGS__)).c_str()); \
-        if (LOUD) { \
-            std::cout << std::vformat(fmt, std::make_format_args(__VA_ARGS__)) << std::endl; \
-        } \
+template<typename... fmtArgs>
+void DBG(const std::format_string<fmtArgs...> fmt, fmtArgs&&... args)
+{
+    if (DEBUG_ENABLED){
+        syslog(LOG_DEBUG, std::vformat(fmt.get(), std::make_format_args(args...)).c_str());
+        if (LOUD){
+            std::cout << std::vformat(fmt.get(), std::make_format_args(args...)) << std::endl;
+        }
     }
+}
 
-#define LOG(fmt, ...)  \
-    syslog(LOG_INFO, std::vformat(fmt, std::make_format_args(__VA_ARGS__)).c_str()); \
-    if (LOUD) { \
-        std::cout << std::vformat(fmt, std::make_format_args(__VA_ARGS__)) << std::endl; \
+
+template<typename... fmtArgs>
+void LOG(const std::format_string<fmtArgs...> fmt, fmtArgs&&... args)
+{
+    syslog(LOG_INFO, std::vformat(fmt.get(), std::make_format_args(args...)).c_str());
+    if (LOUD){
+        std::cout << std::vformat(fmt.get(), std::make_format_args(args...)) << std::endl;
     }
+}
 
-#define ERROR(fmt, ...)  \
-    syslog(LOG_ERR, std::vformat(fmt, std::make_format_args(__VA_ARGS__)).c_str()); \
-    if (LOUD) { \
-        std::cerr << std::vformat(fmt, std::make_format_args(__VA_ARGS__)) << std::endl; \
+
+template<typename... fmtArgs>
+void ERROR(const std::format_string<fmtArgs...> fmt, fmtArgs&&... args)
+{
+    syslog(LOG_ERR, std::vformat(fmt.get(), std::make_format_args(args...)).c_str());
+    if (LOUD){
+        std::cerr << std::vformat(fmt.get(), std::make_format_args(args...)) << std::endl;
     }
-
-
+}
 #endif // LOGLIBRARY_H
