@@ -13,7 +13,7 @@
 #define DEBUG_ENABLED getenv("DEBUG_ENABLED") != NULL
 
 
-#define DEBUG(fmt, ...)  \
+#define DBG(fmt, ...)  \
     if (DEBUG_ENABLED) { \
         syslog(LOG_DEBUG, std::vformat(fmt, std::make_format_args(__VA_ARGS__)).c_str()); \
         if (LOUD) { \
